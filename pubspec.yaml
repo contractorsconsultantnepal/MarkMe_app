@@ -1,0 +1,25 @@
+name: markme_app
+description: "MarkMe — live natural & artificial hazard zone map with geofenced red-zone alerts."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_map: ^7.0.2          # OpenStreetMap rendering
+  latlong2: ^0.9.1             # LatLng type used by flutter_map
+  geolocator: ^13.0.1          # live user location + geofence checks
+  flutter_local_notifications: ^18.0.1  # red-zone entry alerts
+  permission_handler: ^11.3.1  # runtime location permission
+  http: ^1.2.2                 # live hazard feeds (USGS, NASA EONET)
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
