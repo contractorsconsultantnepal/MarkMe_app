@@ -193,7 +193,7 @@ class LiveHazardService {
           color: _eonetSeverityColor(mapped),
           polygon: circlePolygon(LatLng(lat, lon), _eonetRadiusKm(mapped)),
           factors: [
-            HazardFactor(
+            const HazardFactor(
               name: 'Active NASA EONET event',
               contributionPercent: 40,
               description: 'Currently tracked as an open event by NASA Earth Observatory.',

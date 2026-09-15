@@ -121,8 +121,24 @@ void showHazardDetailSheet(BuildContext context, HazardZone zone) {
               const Divider(height: 32),
               Text('Source: ${zone.source}',
                   style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
+              if (zone.sourceUrl.isNotEmpty)
+                Text('Source URL: ${zone.sourceUrl}',
+                    style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
               Text('Last updated: ${zone.lastUpdated.toLocal()}'.split('.').first,
                   style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
+              if (zone.dataLagNote != null && zone.dataLagNote!.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Text(
+                    'Data-lag note: ${zone.dataLagNote!}',
+                    style: TextStyle(fontSize: 12, color: Colors.orange.shade800),
+                  ),
+                ),
+              const SizedBox(height: 8),
+              Text(
+                'Confidence note: ${zone.confidenceNote}',
+                style: TextStyle(fontSize: 12, color: Colors.grey.shade700),
+              ),
             ],
           );
         },

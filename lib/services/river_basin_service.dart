@@ -86,7 +86,11 @@ class RiverBasinService {
       summary:
           '${basin.downstreamNote} Live flood-plain risk from river-discharge + rainfall data.',
       lastUpdated: DateTime.now(),
-      source: 'Open-Meteo Flood API (GloFAS) + weather forecast (live)',
+      source: 'Open-Meteo Flood API (GloFAS) + ${basin.source}',
+      sourceUrl: 'https://open-meteo.com/en/docs/flood-api',
+      confidenceNote:
+          'Flood corridor risk blends live river discharge and rainfall forecasts with a hydrography-derived basin trace. This is a modeled estimate, not an official river warning.',
+      dataLagNote: 'Rainfall and discharge are refreshed on a live polling cycle; the basin trace is versioned and reviewed on a regular audit schedule.',
       isLive: true,
     );
   }
@@ -109,7 +113,11 @@ class RiverBasinService {
       ],
       summary: 'Sudden-onset risk from short-burst rainfall intensity — can rise within minutes.',
       lastUpdated: DateTime.now(),
-      source: 'Open-Meteo weather forecast (live)',
+      source: 'Open-Meteo weather forecast (live) + ${basin.source}',
+      sourceUrl: 'https://open-meteo.com/en/docs',
+      confidenceNote:
+          'Short-burst rainfall intensity is a rapid-onset proxy for flash flooding; use the field signal as an early warning, not a legal flood certificate.',
+      dataLagNote: 'Nowcast rain values update frequently; this layer is intended for short-range situational awareness and should not be treated as a formal hydrology report.',
       isLive: true,
     );
   }
@@ -138,7 +146,7 @@ class RiverBasinService {
               'a documented glacial-lake-outburst-flood source.',
           isHistorical: true,
         ),
-        HazardFactor(
+        const HazardFactor(
           name: 'Current rainfall/discharge signal',
           contributionPercent: 30,
           description: 'Live rain and river-discharge readings near this reach are elevated.',
@@ -149,7 +157,11 @@ class RiverBasinService {
           'You are within 50m of a river course fed by a GLOF-prone glacial lake. '
           '${basin.downstreamNote}',
       lastUpdated: DateTime.now(),
-      source: 'Manual GLOF lake registry + Open-Meteo (live)',
+      source: 'Manual GLOF lake registry + Open-Meteo (live) + ${basin.source}',
+      sourceUrl: 'https://www.icimod.org/',
+      confidenceNote:
+          'The river corridor is treated as a high-priority warning zone for historically monitored glacial-lake outburst risk. This is not a geotechnical hazard certification.',
+      dataLagNote: 'GLOF corridor alerts prioritize fast safety response; the upstream lake registry and weather feed may lag under severe conditions or narrow connectivity.',
       isLive: true,
     );
   }

@@ -18,6 +18,12 @@ class RiverBasin {
 
   final String downstreamNote;
 
+  /// Basin dataset provenance and freshness metadata used to support trust and
+  /// auditability in the premium product.
+  final String source;
+  final String sourceVersion;
+  final DateTime lastVerified;
+
   const RiverBasin({
     required this.id,
     required this.name,
@@ -26,5 +32,8 @@ class RiverBasin {
     this.isGlofSource = false,
     this.glofSourceLakeName,
     this.downstreamNote = '',
+    this.source = 'HydroSHEDS / OpenStreetMap waterway reference dataset',
+    this.sourceVersion = 'v1',
+    required this.lastVerified,
   });
 }

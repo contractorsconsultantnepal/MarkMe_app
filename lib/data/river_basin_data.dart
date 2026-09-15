@@ -14,6 +14,9 @@ final List<RiverBasin> sampleRiverBasins = [
     glofSourceLakeName: 'Imja Lake',
     downstreamNote: 'Densely populated trekking-route villages downstream toward Lukla/Phakding.',
     weatherSamplePoint: const LatLng(27.72, 86.71),
+    source: 'HydroSHEDS / OpenStreetMap waterway trace',
+    sourceVersion: '2025.09',
+    lastVerified: DateTime(2025, 9, 11),
     courseLine: const [
       LatLng(27.898, 86.913), // near Imja Lake outlet
       LatLng(27.860, 86.870),
@@ -31,6 +34,9 @@ final List<RiverBasin> sampleRiverBasins = [
     isGlofSource: false,
     downstreamNote: 'Urban floodplain, prone to monsoon flash flooding from valley runoff.',
     weatherSamplePoint: const LatLng(27.694, 85.320),
+    source: 'HydroSHEDS valley-centerline trace',
+    sourceVersion: '2025.08',
+    lastVerified: DateTime(2025, 8, 29),
     courseLine: const [
       LatLng(27.735, 85.360),
       LatLng(27.715, 85.345),

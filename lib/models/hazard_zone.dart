@@ -113,6 +113,9 @@ class HazardZone {
   final String summary;
   final DateTime lastUpdated;
   final String source; // e.g. "USGS", "NASA EONET", "Manual/OCHA curated"
+  final String sourceUrl;
+  final String confidenceNote;
+  final String? dataLagNote;
   final bool isLive; // true = fetched from a live feed this session, false = static/curated
 
   const HazardZone({
@@ -125,6 +128,10 @@ class HazardZone {
     required this.summary,
     required this.lastUpdated,
     required this.source,
+    this.sourceUrl = '',
+    this.confidenceNote =
+        'Modeled and aggregated from public sources; not a substitute for official emergency guidance, professional survey, or local authority instructions.',
+    this.dataLagNote,
     this.isLive = false,
   });
 

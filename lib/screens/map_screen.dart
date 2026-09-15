@@ -25,7 +25,7 @@ class _MapScreenState extends State<MapScreen> {
   final RiverBasinService _riverService = RiverBasinService();
   late GeofenceService _geofence;
   LatLng? _userPosition;
-  Set<ZoneColor> _visibleColors = ZoneColor.values.toSet();
+  final Set<ZoneColor> _visibleColors = ZoneColor.values.toSet();
 
   List<HazardZone> _liveZones = [];
   List<HazardZone> _riverZones = [];
@@ -104,13 +104,13 @@ class _MapScreenState extends State<MapScreen> {
   Color _fillColor(ZoneColor c) {
     switch (c) {
       case ZoneColor.green:
-        return Colors.green.withOpacity(0.35);
+        return Colors.green.withValues(alpha: 0.35);
       case ZoneColor.yellow:
-        return Colors.amber.withOpacity(0.35);
+        return Colors.amber.withValues(alpha: 0.35);
       case ZoneColor.blue:
-        return Colors.blue.withOpacity(0.35);
+        return Colors.blue.withValues(alpha: 0.35);
       case ZoneColor.red:
-        return Colors.red.withOpacity(0.4);
+        return Colors.red.withValues(alpha: 0.4);
     }
   }
 
@@ -185,6 +185,28 @@ class _MapScreenState extends State<MapScreen> {
                 style: const TextStyle(fontSize: 12),
               ),
             ),
+          Container(
+            width: double.infinity,
+            color: Colors.grey.shade50,
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Accuracy disclaimer: modeled and aggregated from public sources; not a substitute for official emergency guidance, professional survey, or local authority instructions.',
+                  style: TextStyle(fontSize: 11, color: Colors.grey.shade700),
+                ),
+                if (sampleRiverBasins.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4),
+                    child: Text(
+                      'River dataset: ${sampleRiverBasins.first.source} · version ${sampleRiverBasins.first.sourceVersion} · last verified ${sampleRiverBasins.first.lastVerified.toLocal().toString().split('.').first}',
+                      style: TextStyle(fontSize: 11, color: Colors.blueGrey.shade700),
+                    ),
+                  ),
+              ],
+            ),
+          ),
           Expanded(
             child: FlutterMap(
               mapController: _mapController,
