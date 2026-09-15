@@ -38,23 +38,29 @@ class RiverBasinService {
 
   Future<List<HazardZone>> computeBasinZones({List<RiverBasin>? basins}) async {
     final list = basins ?? sampleRiverBasins;
-    final zones = <HazardZone>[];
-
-    for (final basin in list) {
+    final zoneGroups = await Future.wait(list.map((basin) async {
       final reading = await _weather.fetchReading(
         basin.weatherSamplePoint.latitude,
         basin.weatherSamplePoint.longitude,
       );
-      if (reading == null) continue; // feed unreachable — skip, fail soft
-      final assessment = _weather.classify(reading);
+      final assessment = _weather.classify(
+        reading ??
+            const BasinWeatherReading(
+              precipLast3hMm: 0,
+              precipNext24hMm: 0,
+            ),
+      );
 
-      zones.add(_floodZone(basin, assessment));
-      zones.add(_flashFloodZone(basin, assessment));
+      final zones = <HazardZone>[
+        _floodZone(basin, assessment),
+        _flashFloodZone(basin, assessment),
+      ];
       if (basin.isGlofSource) {
         zones.add(_glofCorridorZone(basin, assessment));
       }
-    }
-    return zones;
+      return zones;
+    }));
+    return zoneGroups.expand((zones) => zones).toList();
   }
 
   HazardZone _floodZone(RiverBasin basin, FloodRiskAssessment a) {
@@ -108,7 +114,7 @@ class RiverBasinService {
           name: 'Rainfall — last 3 hours',
           contributionPercent: (r.precipLast3hMm / 60 * 70).clamp(0, 70),
           description: '${r.precipLast3hMm.toStringAsFixed(1)} mm fell in the last 3 hours near this basin.',
-          isHistorical: true,
+          isHistorical: false,
         ),
       ],
       summary: 'Sudden-onset risk from short-burst rainfall intensity — can rise within minutes.',

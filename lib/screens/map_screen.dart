@@ -91,6 +91,36 @@ class _MapScreenState extends State<MapScreen> {
   List<HazardZone> get _visibleZones =>
       _allZones.where((z) => _visibleColors.contains(z.color)).toList();
 
+  String get _feedStatus {
+    if (_loadingLive) return 'Loading live hazard and basin data...';
+    if (_lastLiveRefresh == null) return 'Static zones loaded; live feeds pending.';
+    if (_liveZones.isEmpty && _riverZones.isEmpty) {
+      return 'Live feeds returned no zones; showing the static dataset.';
+    }
+    return 'Loaded ${_liveZones.length} live hazards and ${_riverZones.length} basin zones.';
+  }
+
+  LatLng _zoneCenter(HazardZone zone) {
+    if (zone.polygon.isEmpty) return const LatLng(27.7172, 85.3240);
+    final latitude = zone.polygon.map((point) => point.latitude).reduce((a, b) => a + b) / zone.polygon.length;
+    final longitude = zone.polygon.map((point) => point.longitude).reduce((a, b) => a + b) / zone.polygon.length;
+    return LatLng(latitude, longitude);
+  }
+
+  void _showAllData() {
+    final points = [
+      ...sampleRiverBasins.expand((basin) => basin.courseLine),
+      ..._allZones.expand((zone) => zone.polygon),
+    ];
+    if (points.isEmpty) return;
+    _mapController.fitCamera(
+      CameraFit.bounds(
+        bounds: LatLngBounds.fromPoints(points),
+        padding: const EdgeInsets.all(48),
+      ),
+    );
+  }
+
   void _handleTap(TapPosition tapPos, LatLng point) {
     // Find the first visible zone whose polygon contains the tapped point.
     for (final zone in _visibleZones) {
@@ -144,6 +174,11 @@ class _MapScreenState extends State<MapScreen> {
             tooltip: 'Refresh live hazards',
             onPressed: _loadingLive ? null : _refreshLiveHazards,
           ),
+          IconButton(
+            icon: const Icon(Icons.fit_screen),
+            tooltip: 'Show all loaded hazards',
+            onPressed: _showAllData,
+          ),
           PopupMenuButton<ZoneColor>(
             icon: const Icon(Icons.filter_alt_outlined),
             onSelected: (color) {
@@ -183,6 +218,31 @@ class _MapScreenState extends State<MapScreen> {
                 'Live feeds: ${_liveZones.length} global hazards + ${_riverZones.length} river-basin zones '
                 '(USGS · NASA EONET · Open-Meteo) · updated ${_lastLiveRefresh!.toLocal().toString().split('.').first}',
                 style: const TextStyle(fontSize: 12),
+              ),
+            ),
+          if (_lastLiveRefresh == null || _liveZones.isEmpty || _riverZones.isEmpty)
+            Container(
+              width: double.infinity,
+              color: Colors.amber.shade50,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              child: Text(_feedStatus, style: const TextStyle(fontSize: 12)),
+            ),
+          if (_liveZones.isNotEmpty || _riverZones.isNotEmpty)
+            SizedBox(
+              height: 44,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                children: [..._liveZones, ..._riverZones].take(8).map((zone) {
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 6),
+                    child: ActionChip(
+                      avatar: Icon(zone.isLive ? Icons.podcasts : Icons.layers, size: 16),
+                      label: Text(zone.name, overflow: TextOverflow.ellipsis),
+                      onPressed: () => _mapController.move(_zoneCenter(zone), 10),
+                    ),
+                  );
+                }).toList(),
               ),
             ),
           Container(

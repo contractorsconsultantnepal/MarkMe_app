@@ -44,8 +44,8 @@ class FloodRiskAssessment {
 class WeatherFloodService {
   Future<BasinWeatherReading?> fetchReading(double lat, double lon) async {
     try {
-      final precip = await _fetchPrecipitation(lat, lon);
-      final discharge = await _fetchRiverDischarge(lat, lon);
+      final precip = await _fetchPrecipitation(lat, lon).catchError((_) => (0.0, 0.0));
+      final discharge = await _fetchRiverDischarge(lat, lon).catchError((_) => (null, null));
       return BasinWeatherReading(
         precipLast3hMm: precip.$1,
         precipNext24hMm: precip.$2,
@@ -53,7 +53,10 @@ class WeatherFloodService {
         riverDischarge7dAvg: discharge.$2,
       );
     } catch (_) {
-      return null;
+      return const BasinWeatherReading(
+        precipLast3hMm: 0,
+        precipNext24hMm: 0,
+      );
     }
   }
 
